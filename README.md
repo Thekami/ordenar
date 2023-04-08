@@ -1,1 +1,1 @@
-# ordenar
+Código para leer datos de excel y generar rangos a partir de los valores
