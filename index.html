@@ -1,36 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"></script>
 
 </head>
+
 <body>
 
-  <div class="container">
-  <textarea name="" id="textarea-id" cols="30" rows="10"></textarea>
-  <button id="btnLeer" class="btn btn-success">Leer datos</button>
-  <button id="btnGenera" class="btn btn-primary">Generar rangos</button>
-  <button id="btnTest" class="btn btn-danger">Test</button>
+  <nav class="navbar navbar-expand-lg mb-4 bg-dark">
+    <div class="container">
+      <a style="color: white" class="navbar-brand" href="#">Sistema para la generación de rangos</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
 
-  <table class="table" id="table-id">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Cantidad</th>
-        <th>Rango</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="container">
+
+    <div class="form-floating">
+      <textarea class="form-control mb-2" placeholder="Coloca los datos aquí" id="textarea-id" style="height: 100px"></textarea>
+      <label for="textarea-id">Datos</label>
+    </div>
+
+    <!-- <textarea name="" id="textarea-id" cols="30" rows="10"></textarea> -->
+    <button id="btnLeer" class="btn btn-success">Leer datos</button>
+    <button id="btnGenera" class="btn btn-primary">Generar rangos</button>
+    <button id="btnTest" class="btn btn-danger">Test</button>
+
+    <table class="table mt-4" id="table-id">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Cantidad</th>
+          <th>Rango</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script src="ordenar1.js"></script>
-  
+
 </body>
+
 </html>
