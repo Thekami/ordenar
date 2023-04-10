@@ -1,7 +1,6 @@
 
 let data;
-var total;
-var promedioPorcentaje;
+var total, promedioPorcentaje, sumas;
 
 const btnLeer = document.getElementById('btnLeer'); 
 btnLeer.addEventListener('click', () => {
@@ -22,21 +21,25 @@ btnTest.addEventListener('click', () => {
 
 
 function leerDatos(){
-  const textarea = document.getElementById('textarea-id'); // Reemplaza 'textarea-id' con el ID del elemento textarea en tu HTML
-  let data       = textarea.value.trim().split('\n').slice(1); // Obtiene los datos del textarea y los divide en líneas, excluyendo la primera línea que contiene encabezados
+  const textarea = document.getElementById('textarea-id'); 
+  const data     = textarea.value.trim().split('\n').slice(1); // Obtiene los datos del textarea y los divide en líneas, excluyendo la primera línea que contiene encabezados
   const jsonData = [];
 
   for (let i = 0; i < data.length; i++) {
     const [nombre, cantidad] = data[i].split('\t'); // Divide cada línea en nombre y cantidad
-    const cantidadSinComas = parseFloat(cantidad.replace(/,/g, '').replace('$', '')); // Elimina las comas y el signo de dólar y convierte la cantidad en un número
-    const registro = { NOMBRE_DEL_TRABAJADOR: nombre.trim(), CANTIDAD: cantidadSinComas, PORCENTAJE: 0, RANGO: 0 }; // Crea un objeto con el nombre del trabajador y la cantidad (inicialmente 0)
+    const cantidadSinComas = parseFloat(cantidad.replace(/,/g, '').replace('$', '')); // Elimina las comas y el signo $ y convierte la cantidad en un número
+   
+    const registro = { 
+      NOMBRE_DEL_TRABAJADOR: nombre.trim(), 
+      CANTIDAD: cantidadSinComas, 
+      PORCENTAJE: 0, 
+      RANGO: 0 
+    }; // Crea un objeto con el nombre del trabajador y la cantidad (inicialmente 0)
+    
     jsonData.push(registro); // Agrega el objeto al arreglo de datos en formato JSON
   }
-
-  data = generaTotales(jsonData);
-
-  console.log(JSON.stringify(data));
-  return data;
+  // data = generaTotales(jsonData);
+  return generaTotales(jsonData);
 }
 
 function generaTotales(data){
@@ -59,7 +62,52 @@ function generaTotales(data){
   $('#td-total').html(formatea(total));
   $('#td-prom').html(promedioPorcentaje);
   $('#td-por').html(promedioPorcentaje*2);
+
+  console.log('generaTotales', data);
   return data;
+}
+
+function pintaTotales(data){
+
+  sumas = {
+    total:  {sumaCantidad: 0, sumaPorcentaje: 0},
+    rango1: {min: 0, max: 0, cantidades: [], sumaCantidad: 0, sumaPorcentaje: 0 },
+    rango2: {min: 0, max: 0, cantidades: [], sumaCantidad: 0, sumaPorcentaje: 0 },
+    rango3: {min: 0, max: 0, cantidades: [], sumaCantidad: 0, sumaPorcentaje: 0 },
+  };
+
+  data.reduce((result, item) => {
+
+    if (item.RANGO === 1) {
+      result.rango1.sumaPorcentaje += item.PORCENTAJE;  // Suma los porcentajes del rango 1
+      result.rango1.sumaCantidad += item.CANTIDAD;      // Suma las cantidades del rango 1
+      result.rango1.cantidades.push(item.CANTIDAD);     // Ordena las cantidades del rango 1 en un array
+    } else if (item.RANGO === 2) {
+      result.rango2.sumaPorcentaje += item.PORCENTAJE;  // Suma los porcentajes del rango 2 
+      result.rango2.sumaCantidad += item.CANTIDAD;      // Suma las cantidades del rango 2
+      result.rango2.cantidades.push(item.CANTIDAD);     // Ordena las cantidades del rango 2 en un array
+    } else if (item.RANGO === 3) {
+      result.rango3.sumaPorcentaje += item.PORCENTAJE;  // Suma los porcentajes del rango 3
+      result.rango3.sumaCantidad += item.CANTIDAD;      // Suma las cantidades del rango 3
+      result.rango3.cantidades.push(item.CANTIDAD);     // Ordena las cantidades del rango 3 en un array
+    }
+
+    result.total.sumaPorcentaje += item.PORCENTAJE; // Suma todos los porcentajes
+    result.total.sumaCantidad += item.CANTIDAD;     // Suma todas las cantidades
+    return result;
+  }, sumas);
+  
+  // Obtener los valores minimos para cada rango
+  sumas.rango1.min = Math.min(...sumas.rango1.cantidades);
+  sumas.rango2.min = Math.min(...sumas.rango2.cantidades);
+  sumas.rango3.min = Math.min(...sumas.rango3.cantidades);
+
+  // Obtener los valores máximos para cada rango
+  sumas.rango1.max = Math.max(...sumas.rango1.cantidades);
+  sumas.rango2.max = Math.max(...sumas.rango2.cantidades);
+  sumas.rango3.max = Math.max(...sumas.rango3.cantidades);
+
+  console.log(sumas);
 }
 
 function loadData(data){
@@ -82,21 +130,8 @@ function loadData(data){
 }
 
 function generaRangos(data){
-  // Obtener la suma total de las cantidades
-  // total = data.reduce((acc, val) => acc + val.CANTIDAD, 0);
-
-  const porcentajes = data.map((item) => {
-    return Math.round(((item.CANTIDAD / total) * 100) * 100) / 100;
-  });
-
-  const promedioPorcentaje = Math.round((porcentajes.reduce((acc, curr) => acc + curr, 0) / porcentajes.length)*100)/100;
-  console.log(promedioPorcentaje)
-
-  // Ordenar los datos de forma descendente basado en el campo CANTIDAD
-  data.sort((a, b) => b.CANTIDAD - a.CANTIDAD);
-  
   data = promedioPorcentaje < 5 ? formula2(data) : formula1(data, promedioPorcentaje);
-
+  pintaTotales(data);
   loadData(data);
 }
 
