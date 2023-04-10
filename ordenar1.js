@@ -1,5 +1,7 @@
 
 let data;
+var total;
+var promedioPorcentaje;
 
 const btnLeer = document.getElementById('btnLeer'); 
 btnLeer.addEventListener('click', () => {
@@ -9,7 +11,7 @@ btnLeer.addEventListener('click', () => {
 
 const btnGenera = document.getElementById('btnGenera'); 
 btnGenera.addEventListener('click', () => {
-  generaRangos(data);
+  data = generaRangos(data);
 });
 
 const btnTest = document.getElementById('btnTest'); 
@@ -21,18 +23,43 @@ btnTest.addEventListener('click', () => {
 
 function leerDatos(){
   const textarea = document.getElementById('textarea-id'); // Reemplaza 'textarea-id' con el ID del elemento textarea en tu HTML
-  const data = textarea.value.trim().split('\n').slice(1); // Obtiene los datos del textarea y los divide en líneas, excluyendo la primera línea que contiene encabezados
+  let data       = textarea.value.trim().split('\n').slice(1); // Obtiene los datos del textarea y los divide en líneas, excluyendo la primera línea que contiene encabezados
   const jsonData = [];
 
   for (let i = 0; i < data.length; i++) {
     const [nombre, cantidad] = data[i].split('\t'); // Divide cada línea en nombre y cantidad
     const cantidadSinComas = parseFloat(cantidad.replace(/,/g, '').replace('$', '')); // Elimina las comas y el signo de dólar y convierte la cantidad en un número
-    const registro = { NOMBRE_DEL_TRABAJADOR: nombre.trim(), CANTIDAD: cantidadSinComas, RANGO: 0 }; // Crea un objeto con el nombre del trabajador y la cantidad (inicialmente 0)
+    const registro = { NOMBRE_DEL_TRABAJADOR: nombre.trim(), CANTIDAD: cantidadSinComas, PORCENTAJE: 0, RANGO: 0 }; // Crea un objeto con el nombre del trabajador y la cantidad (inicialmente 0)
     jsonData.push(registro); // Agrega el objeto al arreglo de datos en formato JSON
   }
 
-  console.log(jsonData);
-  return jsonData;
+  data = generaTotales(jsonData);
+
+  console.log(JSON.stringify(data));
+  return data;
+}
+
+function generaTotales(data){
+  
+  //obtenemos el total de CANTIDAD
+  total = data.reduce((acc, val) => acc + val.CANTIDAD, 0);
+
+  // Ordenar los datos de forma descendente basado en el campo CANTIDAD
+  data.sort((a, b) => b.CANTIDAD - a.CANTIDAD);
+
+  //obtener los porcentajes de cada cantidad comparada con el total
+  const porcentajes = data.map((item) => {
+    let resp = Math.round(((item.CANTIDAD / total) * 100) * 100) / 100;
+    item.PORCENTAJE = resp;
+    return resp;
+  });
+
+  promedioPorcentaje = Math.round((porcentajes.reduce((acc, curr) => acc + curr, 0) / porcentajes.length)*100)/100;
+
+  $('#td-total').html(formatea(total));
+  $('#td-prom').html(promedioPorcentaje);
+  $('#td-por').html(promedioPorcentaje*2);
+  return data;
 }
 
 function loadData(data){
@@ -41,20 +68,22 @@ function loadData(data){
   tableBody.innerHTML = "";
 
   for (let i = 0; i < data.length; i++) { 
-    const row          = tableBody.insertRow(); // Agrega una fila a la tabla
-    const nombreCell   = row.insertCell(); // Agrega una celda para el nombre del trabajador
-    const cantidadCell = row.insertCell(); // Agrega una celda para la cantidad
-    const rangoCell    = row.insertCell(); // Agrega una celda para el rango
+    const row            = tableBody.insertRow(); // Agrega una fila a la tabla
+    const nombreCell     = row.insertCell(); // Agrega una celda para el nombre del trabajador
+    const cantidadCell   = row.insertCell(); // Agrega una celda para la cantidad
+    const porcentajeCell = row.insertCell(); // Agrega una celda para el porcentaje
+    const rangoCell      = row.insertCell(); // Agrega una celda para el rango
 
-    nombreCell.innerHTML   = data[i].NOMBRE_DEL_TRABAJADOR; // Asigna el nombre del trabajador a la celda correspondiente
-    cantidadCell.innerHTML = data[i].CANTIDAD.toFixed(2); // Asigna la cantidad a la celda correspondiente, con dos decimales
-    rangoCell.innerHTML    = data[i].RANGO;
+    nombreCell.innerHTML     = data[i].NOMBRE_DEL_TRABAJADOR; // Asigna el nombre del trabajador a la celda correspondiente
+    cantidadCell.innerHTML   = formatea(data[i].CANTIDAD); // Asigna la cantidad a la celda correspondiente, con dos decimales
+    porcentajeCell.innerHTML = data[i].PORCENTAJE;
+    rangoCell.innerHTML      = data[i].RANGO;
   }
 }
 
 function generaRangos(data){
   // Obtener la suma total de las cantidades
-  const total = data.reduce((acc, val) => acc + val.CANTIDAD, 0);
+  // total = data.reduce((acc, val) => acc + val.CANTIDAD, 0);
 
   const porcentajes = data.map((item) => {
     return Math.round(((item.CANTIDAD / total) * 100) * 100) / 100;
@@ -74,7 +103,6 @@ function generaRangos(data){
 function formula1(data, promedioPorcentaje){
   // alert('formula1')
   let porcentaje = (promedioPorcentaje * 2)/100;
-  console.log(porcentaje)
 
   // Establece el 3 como "RANGO ACUTAL"
   let currentRange = 3;
@@ -121,6 +149,16 @@ function formula2(data){
   }
 
   return data;
+}
+
+function formatea(dato){
+  return dato.toLocaleString('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true,
+  });
 }
 
 function prueba(data){

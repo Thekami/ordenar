@@ -29,9 +29,35 @@
 
   <div class="container">
 
-    <div class="form-floating">
-      <textarea class="form-control mb-2" placeholder="Coloca los datos aquí" id="textarea-id" style="height: 100px"></textarea>
-      <label for="textarea-id">Datos</label>
+    <div class="row mb-2  ">
+      <div class="form-floating col-8">
+        <textarea class="form-control" placeholder="Coloca los datos aquí" id="textarea-id" style="min-height: 170px"></textarea>
+        <label for="textarea-id">Coloca tus datos aquí</label>
+      </div>
+      <div class="card col-4">
+        <div class="card-body" style="min-height: 170px">
+          <!-- <ul>
+            <li>Suma monto total: <span>1235</span></li>
+            <li>Promedio porcentajes: 8.0</li>
+            <li>Porcentaje cambio de rango: 9.0</li>
+          </ul> -->
+
+          <table class="table">
+            <tr>
+              <td>Suma monto total:</td>
+              <td id="td-total">123</td>
+            </tr>
+            <tr>
+              <td>Promedio porcentajes:</td>
+              <td id="td-prom">8.0</td>
+            </tr>
+            <tr>
+              <td>Porcentaje cambio de rango:</td>
+              <td id="td-por">9.0</td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- <textarea name="" id="textarea-id" cols="30" rows="10"></textarea> -->
@@ -39,11 +65,14 @@
     <button id="btnGenera" class="btn btn-primary">Generar rangos</button>
     <button id="btnTest" class="btn btn-danger">Test</button>
 
+    <hr>
+
     <table class="table mt-4" id="table-id">
       <thead>
         <tr>
           <th>Nombre</th>
           <th>Cantidad</th>
+          <th>Porcentaje</th>
           <th>Rango</th>
         </tr>
       </thead>
@@ -51,6 +80,7 @@
     </table>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
   <script src="ordenar1.js"></script>
 
 </body>
