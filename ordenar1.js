@@ -7,11 +7,19 @@ $(document).on('click', '#btnLeer', function(e){
   data = leerDatos();
   loadDataIzq(data);
   $('#btnGenera').prop("disabled", false);
+  $('#btnImprimir').prop("disabled", true);
 });
 
 $(document).on('click', '#btnGenera', function(e){
   e.preventDefault();
   data = generaRangos(data);
+  $('#btnGenera').prop("disabled", true);
+  $('#btnImprimir').prop("disabled", false);
+});
+
+$(document).on('click', '#btnImprimir', function(e){
+  e.preventDefault();
+  alert("Acción imprimir");
   $('#btnGenera').prop("disabled", true);
 });
 
@@ -136,56 +144,50 @@ function sumaTotales(data){
 function loadDataIzq(data){
   
   $('#tablaDatos').slideUp("slow", function(){
-    $('#tablaDatos').slideDown("slow", function(){
+    const table = document.getElementById('table-id'); // Reemplaza 'table-id' con el ID del elemento tabla en tu HTML
+    const tableBody = table.getElementsByTagName('tbody')[0]; // Obtiene la referencia al cuerpo de la tabla
+    tableBody.innerHTML = "";
 
-      const table = document.getElementById('table-id'); // Reemplaza 'table-id' con el ID del elemento tabla en tu HTML
-      const tableBody = table.getElementsByTagName('tbody')[0]; // Obtiene la referencia al cuerpo de la tabla
-      tableBody.innerHTML = "";
+    for (let i = 0; i < data.length; i++) { 
+      const row            = tableBody.insertRow(); // Agrega una fila a la tabla
+      const nombreCell     = row.insertCell(); // Agrega una celda para el nombre del trabajador
+      const cantidadCell   = row.insertCell(); // Agrega una celda para la cantidad
+      const porcentajeCell = row.insertCell(); // Agrega una celda para el porcentaje
+      const rangoCell      = row.insertCell(); // Agrega una celda para el rango
 
-      for (let i = 0; i < data.length; i++) { 
-        const row            = tableBody.insertRow(); // Agrega una fila a la tabla
-        const nombreCell     = row.insertCell(); // Agrega una celda para el nombre del trabajador
-        const cantidadCell   = row.insertCell(); // Agrega una celda para la cantidad
-        const porcentajeCell = row.insertCell(); // Agrega una celda para el porcentaje
-        const rangoCell      = row.insertCell(); // Agrega una celda para el rango
-
-        nombreCell.innerHTML     = data[i].NOMBRE_DEL_TRABAJADOR; // Asigna el nombre del trabajador a la celda correspondiente
-        cantidadCell.innerHTML   = formatea(data[i].CANTIDAD); // Asigna la cantidad a la celda correspondiente, con dos decimales
-        porcentajeCell.innerHTML = data[i].PORCENTAJE;
-        rangoCell.innerHTML      = data[i].RANGO;
-      }
-
-    });
+      nombreCell.innerHTML     = data[i].NOMBRE_DEL_TRABAJADOR; // Asigna el nombre del trabajador a la celda correspondiente
+      cantidadCell.innerHTML   = formatea(data[i].CANTIDAD); // Asigna la cantidad a la celda correspondiente, con dos decimales
+      porcentajeCell.innerHTML = data[i].PORCENTAJE;
+      rangoCell.innerHTML      = data[i].RANGO;
+    }
+    $('#tablaDatos').slideDown();
   });
 }
 
 function loadDataDer(sumas){
 
   $('#tablasTotales').slideUp("slow", function(){
-    $('#tablasTotales').slideDown("slow", function(){
+    $('#r1Min').html(formatea(sumas.rango1.min));
+    $('#r1Max').html(formatea(sumas.rango1.max));
 
-      $('#r1Min').html(formatea(sumas.rango1.min));
-      $('#r1Max').html(formatea(sumas.rango1.max));
+    $('#r2Min').html(formatea(sumas.rango2.min));
+    $('#r2Max').html(formatea(sumas.rango2.max));
 
-      $('#r2Min').html(formatea(sumas.rango2.min));
-      $('#r2Max').html(formatea(sumas.rango2.max));
+    $('#r3Min').html(formatea(sumas.rango3.min));
+    $('#r3Max').html(formatea(sumas.rango3.max));
 
-      $('#r3Min').html(formatea(sumas.rango3.min));
-      $('#r3Max').html(formatea(sumas.rango3.max));
+    $('#r1SumaCantidad').html(formatea(sumas.rango1.sumaCantidad));
+    $('#r1SumaPorcentaje').html((Math.round(sumas.rango1.sumaPorcentaje*100)/100)+'%');
 
-      $('#r1SumaCantidad').html(formatea(sumas.rango1.sumaCantidad));
-      $('#r1SumaPorcentaje').html((Math.round(sumas.rango1.sumaPorcentaje*100)/100)+'%');
+    $('#r2SumaCantidad').html(formatea(sumas.rango2.sumaCantidad));
+    $('#r2SumaPorcentaje').html((Math.round(sumas.rango2.sumaPorcentaje*100)/100)+'%');
 
-      $('#r2SumaCantidad').html(formatea(sumas.rango2.sumaCantidad));
-      $('#r2SumaPorcentaje').html((Math.round(sumas.rango2.sumaPorcentaje*100)/100)+'%');
+    $('#r3SumaCantidad').html(formatea(sumas.rango3.sumaCantidad));
+    $('#r3SumaPorcentaje').html((Math.round(sumas.rango3.sumaPorcentaje*100)/100)+'%');
 
-      $('#r3SumaCantidad').html(formatea(sumas.rango3.sumaCantidad));
-      $('#r3SumaPorcentaje').html((Math.round(sumas.rango3.sumaPorcentaje*100)/100)+'%');
-
-      $('#totalSumaCantidad').html(formatea(sumas.total.sumaCantidad));
-      $('#totalSumaPorcentaje').html(Math.round((sumas.total.sumaPorcentaje *100)/100)+'%');
-
-    })
+    $('#totalSumaCantidad').html(formatea(sumas.total.sumaCantidad));
+    $('#totalSumaPorcentaje').html(Math.round((sumas.total.sumaPorcentaje *100)/100)+'%');
+    $('#tablasTotales').slideDown();
   });
 
 }
