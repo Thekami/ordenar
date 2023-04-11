@@ -82,6 +82,7 @@ function generaTotales(data){
 
 function sumaTotales(data){
 
+  // Variable que contendrá los datos necesarios para las tablas de la sección de abajo a la derecha
   sumas = {
     total:  {sumaCantidad: 0, sumaPorcentaje: 0},
     rango1: {min: 0, max: 0, cantidades: [], sumaCantidad: 0, sumaPorcentaje: 0 },
@@ -111,15 +112,25 @@ function sumaTotales(data){
   }, sumas);
   
   // Obtener los valores minimos para cada rango
-  sumas.rango1.min = Math.min(...sumas.rango1.cantidades);
-  sumas.rango2.min = Math.min(...sumas.rango2.cantidades);
-  sumas.rango3.min = Math.min(...sumas.rango3.cantidades);
+  let r1Min = Math.min(...sumas.rango1.cantidades);
+  let r2Min = Math.min(...sumas.rango2.cantidades);
+  let r3Min = Math.min(...sumas.rango3.cantidades);
 
   // Obtener los valores máximos para cada rango
-  sumas.rango1.max = Math.max(...sumas.rango1.cantidades);
-  sumas.rango2.max = Math.max(...sumas.rango2.cantidades);
-  sumas.rango3.max = Math.max(...sumas.rango3.cantidades);
-  
+  let r1Max = Math.max(...sumas.rango1.cantidades);
+  let r2Max = Math.max(...sumas.rango2.cantidades);
+  let r3Max = Math.max(...sumas.rango3.cantidades);
+
+  let diff_r1_r2 = r2Min - r1Max; // Calculo la diferencia entre rango 1 y 2
+  sumas.rango1.max = parseFloat((r1Max + (diff_r1_r2/2) - 1).toFixed());  // Selecciono un numero intermedio entre ambos rangos para poder definir el limite superior del rango 1.
+  sumas.rango2.min = parseFloat((r2Min - (diff_r1_r2/2)).toFixed());      // Selecciono un numero intermedio entre ambos rangos para poder definir el limite inferior del rango 2.
+
+  let diff_r2_r3 = r3Min - r2Max; // Calculo la diferencia entre rango 2 y 3
+  sumas.rango2.max = parseFloat((r2Max + (diff_r2_r3/2) - 1).toFixed());  // Selecciono un numero intermedio entre ambos rangos para poder definir el limite superior del rango 2.
+  sumas.rango3.min = parseFloat((r3Min - (diff_r2_r3/2)).toFixed());      // Selecciono un numero intermedio entre ambos rangos para poder definir el limite inferior del rango 3.
+
+  sumas.rango1.min = Math.floor(r1Min / 1000) * 1000; // redondeo al valor inmediatamente inferior en miles (29,232 -> 29,000)
+  sumas.rango3.max = Math.ceil(r3Max / 1000) * 1000;  // redondeo al valor inmediatamente superior en miles (29,232 -> 30,000)
 }
 
 function loadDataIzq(data){
@@ -155,10 +166,10 @@ function loadDataDer(sumas){
 
       $('#r1Min').html(formatea(sumas.rango1.min));
       $('#r1Max').html(formatea(sumas.rango1.max));
-      
+
       $('#r2Min').html(formatea(sumas.rango2.min));
       $('#r2Max').html(formatea(sumas.rango2.max));
-      
+
       $('#r3Min').html(formatea(sumas.rango3.min));
       $('#r3Max').html(formatea(sumas.rango3.max));
 
